@@ -151,7 +151,7 @@
     <div id="resultCard" class="result-card">
         <div id="studentName" class="student-name"></div>
 
-        <!-- 1. NOTA DESTACADA: NOTA DEL CURSO (Promedio general) -->
+        <!-- NOTA DEL CURSO (Promedio general) -->
         <div class="main-grade-box">
             <div class="title">Nota Final del Curso</div>
             <div id="notaCurso" class="value"></div>
@@ -172,7 +172,7 @@
             <span id="e3" class="grade-value"></span>
         </div>
         
-        <!-- 2. NOTA DESTACADA ENTREGA 4 (Promedio Presentación + Trabajo Final) -->
+        <!-- NOTA FINAL ENTREGA 4 -->
         <div class="grade-row highlight">
             <span>Nota Final Entrega 4 (Promedio):</span>
             <span id="e4f" class="grade-value"></span>
@@ -201,6 +201,7 @@
             return;
         }
 
+        // Búsqueda robusta convirtiendo ambos a texto y eliminando espacios
         const estudiante = ESTUDIANTES_DATA.find(est => String(est.ID).trim() === idInput);
 
         if (estudiante) {
