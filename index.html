@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Notas - SEDI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            margin-top: 15px;
+        }
+        .result-card {
+            display: none;
+            margin-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 20px;
+        }
+        .student-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        /* Cuadro destacado para la Nota Final del Curso */
+        .main-grade-box {
+            background-color: #2980b9;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .main-grade-box .title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+        .main-grade-box .value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .grade-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 15px;
+        }
+        .grade-row.highlight {
+            background-color: #e8f8f5;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            color: #16a085;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .grade-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Consulta de Notas</h2>
+    <p class="subtitle">Ingresa tu ID de estudiante para consultar tus calificaciones</p>
+    
+    <div class="input-group">
+        <input type="text" id="studentId" placeholder="Ej: 1000116227">
+        <button onclick="buscarNotas()">Consultar</button>
+    </div>
+
+    <div id="errorMessage" class="error-message">No se encontró ningún estudiante con ese ID.</div>
+
+    <div id="resultCard" class="result-card">
+        <div id="studentName" class="student-name"></div>
+
+        <!-- PRIMERA NOTA: NOTA FINAL DEL CURSO -->
+        <div class="main-grade-box">
+            <div class="title">Nota Final del Curso</div>
+            <div id="notaCurso" class="value"></div>
+        </div>
+
+        <div class="section-title">Desglose de Calificaciones</div>
+        
+        <div class="grade-row">
+            <span>Entrega 1:</span>
+            <span id="e1" class="grade-value"></span>
+        </div>
+        <div class="grade-row">
+            <span>Entrega 2:</span>
+            <span id="e2" class="grade-value"></span>
+        </div>
+        <div class="grade-row">
+            <span>Entrega 3:</span>
+            <span id="e3" class="grade-value"></span>
+        </div>
+        <div class="grade-row">
+            <span>Entrega 4 Presentación:</span>
+            <span id="e4p" class="grade-value"></span>
+        </div>
+        <div class="grade-row">
+            <span>Entrega 4 Trabajo Final:</span>
+            <span id="e4tf" class="grade-value"></span>
+        </div>
+        <div class="grade-row highlight">
+            <span>Nota Final Entrega 4 (Promedio):</span>
+            <span id="e4f" class="grade-value"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Carga de datos de los estudiantes -->
+<script src="datos.js"></script>
+
+<script>
+    function buscarNotas() {
+        const idInput = document.getElementById('studentId').value.trim();
+        const errorMessage = document.getElementById('errorMessage');
+        const resultCard = document.getElementById('resultCard');
+
+        if (!idInput) {
+            alert('Por favor, ingresa tu ID.');
+            return;
+        }
+
+        // Buscar el estudiante por ID
+        const estudiante = ESTUDIANTES_DATA.find(est => String(est.ID).trim() === idInput);
+
+        if (estudiante) {
+            errorMessage.style.display = 'none';
+            resultCard.style.display = 'block';
+
+            // Mostrar el nombre y la Nota Final del Curso en primer lugar
+            document.getElementById('studentName').innerText = estudiante.Nombre;
+            document.getElementById('notaCurso').innerText = estudiante['NOTA CURSO'];
+
+            // Mostrar el desglose de entregas
+            document.getElementById('e1').innerText = estudiante['ENTREGA 1'];
+            document.getElementById('e2').innerText = estudiante['ENTREGA 2'];
+            document.getElementById('e3').innerText = estudiante['ENTREGA 3'];
+            document.getElementById('e4p').innerText = estudiante['ENTREGA 4 PRESENTACIÓN'];
+            document.getElementById('e4tf').innerText = estudiante['ENTREGA 4 TRABAJO FINAL'];
+            document.getElementById('e4f').innerText = estudiante['NOTA FINAL ENTREGA 4'];
+        } else {
+            resultCard.style.display = 'none';
+            errorMessage.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
