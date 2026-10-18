@@ -87,7 +87,6 @@
             margin-bottom: 15px;
             text-align: center;
         }
-        /* Cuadro destacado para la Nota Final del Curso */
         .main-grade-box {
             background-color: #2980b9;
             color: white;
@@ -152,7 +151,7 @@
     <div id="resultCard" class="result-card">
         <div id="studentName" class="student-name"></div>
 
-        <!-- PRIMERA NOTA: NOTA FINAL DEL CURSO -->
+        <!-- 1. NOTA DESTACADA: NOTA DEL CURSO (Promedio general) -->
         <div class="main-grade-box">
             <div class="title">Nota Final del Curso</div>
             <div id="notaCurso" class="value"></div>
@@ -172,22 +171,23 @@
             <span>Entrega 3:</span>
             <span id="e3" class="grade-value"></span>
         </div>
-        <div class="grade-row">
-            <span>Entrega 4 Presentación:</span>
-            <span id="e4p" class="grade-value"></span>
-        </div>
-        <div class="grade-row">
-            <span>Entrega 4 Trabajo Final:</span>
-            <span id="e4tf" class="grade-value"></span>
-        </div>
+        
+        <!-- 2. NOTA DESTACADA ENTREGA 4 (Promedio Presentación + Trabajo Final) -->
         <div class="grade-row highlight">
             <span>Nota Final Entrega 4 (Promedio):</span>
             <span id="e4f" class="grade-value"></span>
         </div>
+        <div class="grade-row" style="padding-left: 15px; font-size: 14px; color: #555;">
+            <span>↳ Entrega 4 Presentación:</span>
+            <span id="e4p" class="grade-value"></span>
+        </div>
+        <div class="grade-row" style="padding-left: 15px; font-size: 14px; color: #555;">
+            <span>↳ Entrega 4 Trabajo Final:</span>
+            <span id="e4tf" class="grade-value"></span>
+        </div>
     </div>
 </div>
 
-<!-- Carga de datos de los estudiantes -->
 <script src="datos.js"></script>
 
 <script>
@@ -201,24 +201,21 @@
             return;
         }
 
-        // Buscar el estudiante por ID
         const estudiante = ESTUDIANTES_DATA.find(est => String(est.ID).trim() === idInput);
 
         if (estudiante) {
             errorMessage.style.display = 'none';
             resultCard.style.display = 'block';
 
-            // Mostrar el nombre y la Nota Final del Curso en primer lugar
             document.getElementById('studentName').innerText = estudiante.Nombre;
             document.getElementById('notaCurso').innerText = estudiante['NOTA CURSO'];
 
-            // Mostrar el desglose de entregas
             document.getElementById('e1').innerText = estudiante['ENTREGA 1'];
             document.getElementById('e2').innerText = estudiante['ENTREGA 2'];
             document.getElementById('e3').innerText = estudiante['ENTREGA 3'];
+            document.getElementById('e4f').innerText = estudiante['NOTA FINAL ENTREGA 4'];
             document.getElementById('e4p').innerText = estudiante['ENTREGA 4 PRESENTACIÓN'];
             document.getElementById('e4tf').innerText = estudiante['ENTREGA 4 TRABAJO FINAL'];
-            document.getElementById('e4f').innerText = estudiante['NOTA FINAL ENTREGA 4'];
         } else {
             resultCard.style.display = 'none';
             errorMessage.style.display = 'block';
